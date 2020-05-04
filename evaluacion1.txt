@@ -1,0 +1,37 @@
+CREATE PROC USP_LISTACLIENTES
+@FechaInicio DATETIME
+,@FechaFin DATETIME
+
+AS
+BEGIN
+
+SELECT C.NombreCompañia, sum(preciounidad*cantidad) AS MONTOTOTAL ,count(d.idpedido)  AS TOTALPEDIDOS
+
+FROM CLIENTES C INNER JOIN PEDIDOS P
+
+ON C.IDCLIENTE = P.IDCLIENTE INNER JOIN detallesdepedidos D
+
+ON P.IDPEDIDO = D.idpedido
+
+WHERE FechaPedido BETWEEN @FechaInicio AND @FechaFin
+
+GROUP BY C.NombreCompañia
+
+END
+
+----------------------
+create procedure USP_ListarClientes2
+@FechaInicio datetime,
+@FechaFin datetime
+as
+begin
+	select c.idCliente, c.NombreCompañia, dp.preciounidad, dp.cantidad, (dp.preciounidad * dp.cantidad) as 'Total'
+	from clientes c
+	join pedidos p
+	on (c.idCliente = p.IdCliente)
+	join detallesdepedidos dp
+	on (p.IdPedido = dp.idpedido)
+	where p.FechaPedido between @FechaInicio and @FechaFin;
+end;
+
+execute USP_ListarClientes2 '1994-08-04','1994-08-16'
